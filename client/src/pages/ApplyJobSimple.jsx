@@ -13,7 +13,7 @@ import { useAuth } from "@clerk/clerk-react";
 const ApplyJobSimple = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getToken } = useAuth();
+  const { getToken, isLoaded, isSignedIn: clerkSignedIn } = useAuth();
   const [jobData, setJobData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isApplying, setIsApplying] = useState(false);
@@ -24,7 +24,7 @@ const ApplyJobSimple = () => {
   const [selectedLocations, setSelectedLocations] = useState([]);
   const [filteredRelatedJobs, setFilteredRelatedJobs] = useState([]);
 
-  const { jobs, userApplications, isSignedIn, userData } = useContext(AppContext);
+  const { jobs, userApplications, userData } = useContext(AppContext);
   const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
   // Check if user is already applied for this job
@@ -37,14 +37,14 @@ const ApplyJobSimple = () => {
     }
   }, [userApplications, jobData]);
 
-  // Redirect non-logged-in users
+  // Redirect non-logged-in users (wait for Clerk to load)
   useEffect(() => {
-    if (!isLoading && !isSignedIn) {
+    if (isLoading || !isLoaded) return;
+    if (!clerkSignedIn) {
       toast.error("Please sign in to apply for jobs");
-      // Redirect to sign-in with return URL so user comes back after login
       navigate(`/sign-in?redirect=${encodeURIComponent(`/apply-job/${id}`)}`);
     }
-  }, [isLoading, isSignedIn, navigate, id]);
+  }, [isLoading, isLoaded, clerkSignedIn, navigate, id]);
 
   // Fetch job data
   const fetchJob = async () => {
@@ -68,7 +68,7 @@ const ApplyJobSimple = () => {
   const handleApply = async (e) => {
     e.preventDefault();
     
-    if (!isSignedIn) {
+    if (!clerkSignedIn) {
       toast.error("Please sign in to apply for jobs");
       navigate(`/sign-in?redirect=${encodeURIComponent(`/apply-job/${id}`)}`);
       return;
@@ -150,7 +150,7 @@ const ApplyJobSimple = () => {
     fetchJob();
   }, [id]);
 
-  if (isLoading) return <Loading />;
+  if (isLoading || !isLoaded) return <Loading />;
   if (!jobData) return <div>Job not found</div>;
 
   return (
@@ -206,7 +206,7 @@ const ApplyJobSimple = () => {
 
         {/* Application Form */}
         <div className="lg:col-span-2">
-          {!isSignedIn ? (
+          {!clerkSignedIn ? (
             <div className="bg-white border border-gray-300 rounded-xl p-8 shadow-md text-center">
               <h2 className="text-2xl font-semibold mb-4">Sign In Required</h2>
               <p className="text-gray-600 mb-6">Please sign in to apply for this job.</p>
