@@ -186,17 +186,18 @@ export const applyForJob = async (req, res) => {
       });
     }
 
+    // Find the job
     let job;
     try {
       if (isMongoConnected()) {
         job = await Job.findById(jobId);
       } else {
-        job = handleInMemoryData('findJobById', { jobId });
+        job = global.inMemoryData.jobs.find(j => j._id === jobId);
       }
-    } catch (dbError) {
+    } catch (jobLookupError) {
       return res.status(500).json({
         success: false,
-        message: "Database error while finding job"
+        message: "Database error while looking up job"
       });
     }
 
@@ -207,24 +208,23 @@ export const applyForJob = async (req, res) => {
       });
     }
 
-    // Check if user already applied
+    // Check if user already applied for this job
     let existingApplication;
     try {
       if (isMongoConnected()) {
         existingApplication = await JobApplication.findOne({
           userId: user._id,
-          jobId
+          jobId: jobId
         });
       } else {
-        existingApplication = handleInMemoryData('findApplicationByUserAndJob', {
-          userId: user._id,
-          jobId
-        });
+        existingApplication = global.inMemoryData.applications.find(app =>
+          app.userId === user._id && app.jobId === jobId
+        );
       }
-    } catch (duplicateCheckError) {
+    } catch (applicationLookupError) {
       return res.status(500).json({
         success: false,
-        message: "Database error while checking application status"
+        message: "Database error while checking existing application"
       });
     }
 

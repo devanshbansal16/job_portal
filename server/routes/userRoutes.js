@@ -10,6 +10,7 @@ import { uploadPDF } from '../config/multer.js';
 import { protectUser } from '../middleware/clerkMiddleware.js';
 import { clerk } from '../config/clerk.js';
 import { User } from '../models/index.js';
+import { ClerkExpressWithAuth } from '@clerk/clerk-sdk-node';
 
 const router = express.Router();
 
@@ -111,10 +112,12 @@ const handleUserSync = async (req, res) => {
   }
 };
 
-// Routes
-router.post("/sync", handleUserSync);
+// Routes - sync endpoint needs ClerkExpressWithAuth
+router.post("/sync", ClerkExpressWithAuth({
+  authorizedParties: ['http://localhost:5173', 'http://localhost:5000']
+}), handleUserSync);
 
-// Protect all routes after this middleware
+// Protect all routes after this middleware (except sync which is above)
 router.use(protectUser);
 
 // Get user profile data
