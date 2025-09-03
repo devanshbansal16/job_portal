@@ -20,8 +20,7 @@ const JobCard = ({ job }) => {
   };
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
-  const companyLogoSrc = job.companyId?.imageUrl
-    || (job.companyId?.image ? `${backendUrl}/uploads/${job.companyId.image}` : assets.default_company_logo);
+  const companyLogoSrc = `${backendUrl}/uploads/${job.companyId.image}`;
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col gap-4">
