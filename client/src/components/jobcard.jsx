@@ -31,7 +31,7 @@ const JobCard = ({ job }) => {
           src={companyLogoSrc}
           alt={`${job.companyId?.name || "Company"} logo`}
           className="w-12 h-12 object-contain"
-          onError={(e) => { e.currentTarget.src = assets.default_company_logo; }}
+          // onError={(e) => { e.currentTarget.src = assets.default_company_logo; }}
         />
       </div>
 
