@@ -1,11 +1,38 @@
-# React + Vite
+# Job Portal Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + Vite frontend for the job portal application.
 
-Currently, two official plugins are available:
+## Environment Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Before running the application, you need to create a `.env` file in the client directory with the following variables:
+
+```env
+# Backend API URL
+VITE_BACKEND_URL=http://localhost:5000
+
+# Clerk Authentication
+VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key_here
+```
+
+## Development
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Create the `.env` file with your configuration
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+## Building for Production
+
+```bash
+npm run build
+```
 
 ## Expanding the ESLint configuration
 

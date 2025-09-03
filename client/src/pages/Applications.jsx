@@ -228,7 +228,7 @@ const Applications = () => {
                     >
                       <td className="px-6 py-4 flex items-center gap-3">
                         <img
-                          src={job.companyId?.imageUrl || `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/uploads/${job.companyId?.image || ''}`}
+                          src={job.companyId?.imageUrl || `${import.meta.env.VITE_BACKEND_URL}/uploads/${job.companyId?.image || ''}`}
                           alt={job.companyId?.name || "Company"}
                           className="w-6 h-6 object-contain"
                           onError={(e) => { e.currentTarget.style.display = 'none'; }}

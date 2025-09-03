@@ -56,7 +56,7 @@ const Dashboard = () => {
               {/* Company Logo */}
               {companyData.image || companyData.imageUrl ? (
                 <img
-                  src={companyData.imageUrl || `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/uploads/${companyData.image}`}
+                  src={companyData.imageUrl || `${import.meta.env.VITE_BACKEND_URL}/uploads/${companyData.image}`}
                   alt="Company Logo"
                   className="w-8 h-8 rounded-full object-cover border"
                   onError={(e) => {

@@ -19,7 +19,7 @@ const JobCard = ({ job }) => {
     scrollTo(0, 0);
   };
 
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const companyLogoSrc = job.companyId?.imageUrl
     || (job.companyId?.image ? `${backendUrl}/uploads/${job.companyId.image}` : assets.default_company_logo);
 

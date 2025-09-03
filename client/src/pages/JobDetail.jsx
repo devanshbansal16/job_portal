@@ -138,7 +138,7 @@ const JobDetail = () => {
           {/* Left */}
           <div className="flex items-start gap-6">
             <img
-              src={(jobData.companyId && (jobData.companyId.imageUrl || (jobData.companyId.image ? `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/uploads/${jobData.companyId.image}` : ''))) || assets.default_company_logo}
+              src={(jobData.companyId && (jobData.companyId.imageUrl || (jobData.companyId.image ? `${import.meta.env.VITE_BACKEND_URL}/uploads/${jobData.companyId.image}` : ''))) || assets.default_company_logo}
               alt="Company Logo"
               className="w-24 h-24 object-contain rounded-lg bg-white border"
               onError={(e) => { e.currentTarget.style.display = 'none'; }}

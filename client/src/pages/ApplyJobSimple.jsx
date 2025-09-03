@@ -25,7 +25,13 @@ const ApplyJobSimple = () => {
   const [filteredRelatedJobs, setFilteredRelatedJobs] = useState([]);
 
   const { jobs, userApplications, userData } = useContext(AppContext);
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  
+  // Validate backend URL is set
+  if (!backendUrl) {
+    console.error('❌ VITE_BACKEND_URL environment variable is not set!');
+    return <div className="text-center py-10">Backend URL not configured. Please check your environment variables.</div>;
+  }
 
   // Check if user is already applied for this job
   useEffect(() => {
@@ -159,7 +165,7 @@ const ApplyJobSimple = () => {
       <div className="bg-blue-50 border border-blue-300 rounded-xl p-8 shadow-md mb-8">
         <div className="flex items-start gap-6">
           <img
-            src={jobData.companyId?.imageUrl || `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/uploads/${jobData.companyId?.image}`}
+            src={jobData.companyId?.imageUrl || `${import.meta.env.VITE_BACKEND_URL}/uploads/${jobData.companyId?.image}`}
             alt="Company Logo"
             className="w-24 h-24 object-contain rounded-lg bg-white border"
             onError={(e) => { e.currentTarget.src = assets.default_avatar; }}

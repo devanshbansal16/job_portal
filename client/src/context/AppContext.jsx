@@ -31,7 +31,13 @@ const retryRequest = async (requestFn, maxRetries = 3, delay = 1000) => {
 export const AppContext = createContext();
 
 export const AppContextProvider = (props) => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  
+  // Validate backend URL is set
+  if (!backendUrl) {
+    console.error('❌ VITE_BACKEND_URL environment variable is not set!');
+    console.error('❌ Please create a .env file in the client directory with VITE_BACKEND_URL=http://localhost:5000');
+  }
 
   const { user } = useUser();
   const { getToken } = useAuth();
