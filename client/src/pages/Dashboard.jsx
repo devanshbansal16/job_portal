@@ -53,51 +53,11 @@ const Dashboard = () => {
               <span className="max-sm:hidden text-gray-700 font-medium">
                 Welcome, {companyData.name}
               </span>
-              {/* Company Logo */}
-              {companyData.image ? (
-                <img
-                  src={(() => {
-              const backendUrl = import.meta.env.VITE_BACKEND_URL;
-              console.log('🏢 Dashboard - Backend URL:', backendUrl);
-              console.log('🏢 Dashboard - Company data:', companyData);
-              
-              if (!companyData) {
-                console.log('🏢 Dashboard - No company data, using default logo');
-                return assets.default_company_logo;
-              }
-              if (companyData.imageUrl) {
-                console.log('🏢 Dashboard - Using imageUrl:', `${backendUrl}/uploads/${companyData.image}`);
-                return companyData.imageUrl;
-              }
-              if (companyData.image) {
-                if (companyData.image.startsWith('http')) {
-                  console.log('🏢 Dashboard - Using full URL:', companyData.image);
-                  return companyData.image;
-                }
-                const constructedUrl = `${backendUrl}/uploads/${companyData.image}`;
-                console.log('🏢 Dashboard - Constructed URL:', constructedUrl);
-                return constructedUrl;
-              }
-              console.log('🏢 Dashboard - No image, using default logo');
-              return assets.default_company_logo;
-            })()}
-                  alt="Company Logo"
-                  className="w-8 h-8 rounded-full object-cover border"
-                  onError={(e) => {
-                    if (e.target) {
-                      e.target.style.display = 'none';
-                    }
-                    if (e.target && e.target.nextSibling) {
-                      e.target.nextSibling.style.display = 'block';
-                    }
-                  }}
-                />
-              ) : null}
-              {!(companyData.image || companyData.imageUrl) && (
-                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                  No file chosen
-                </span>
-              )}
+              <img
+                src={`${import.meta.env.VITE_BACKEND_URL}/uploads/${companyData.image}`}
+                alt="Profile"
+                className="w-8 h-8 object-cover rounded-full"
+              />
             </div>
             
             <button
