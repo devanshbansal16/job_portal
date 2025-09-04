@@ -37,6 +37,8 @@ export const AppContextProvider = (props) => {
   if (!backendUrl) {
     console.error('❌ VITE_BACKEND_URL environment variable is not set!');
     console.error('❌ Please create a .env file in the client directory with VITE_BACKEND_URL=http://localhost:5000');
+  } else {
+    console.log('🌐 Backend URL:', backendUrl);
   }
 
   const { user } = useUser();
@@ -131,11 +133,18 @@ export const AppContextProvider = (props) => {
 
   // Function to fetch user data
   const fetchUserData = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      console.log("❌ No user object from Clerk");
+      return;
+    }
 
     try {
+      console.log("🔍 Attempting to get token from Clerk...");
       const token = await getToken();
+      console.log("🔑 Token received:", token ? "Yes" : "No");
+      console.log("🔑 Token preview:", token ? token.substring(0, 20) + "..." : "No token");
       if (!token) {
+        console.error("❌ No token available from Clerk");
         return;
       }
 
@@ -164,6 +173,7 @@ export const AppContextProvider = (props) => {
     try {
       const token = await getToken();
       if (!token) {
+        console.error("❌ No token available from Clerk");
         return;
       }
 
@@ -216,6 +226,7 @@ export const AppContextProvider = (props) => {
       
       const token = await getToken();
       if (!token) {
+        console.error("❌ No token available from Clerk");
         return;
       }
 
@@ -223,6 +234,7 @@ export const AppContextProvider = (props) => {
         throw new Error("Email address is required");
       }
 
+      console.log("🔄 Syncing user with backend:", backendUrl);
       const { data } = await retryRequest(async () => 
         axios.post(
           `${backendUrl}/api/users/sync`,
@@ -281,6 +293,7 @@ export const AppContextProvider = (props) => {
     try {
       const token = await getToken();
       if (!token) {
+        console.error("❌ No token available from Clerk");
         return;
       }
 
