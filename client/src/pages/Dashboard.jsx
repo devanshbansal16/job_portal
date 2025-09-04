@@ -57,21 +57,39 @@ const Dashboard = () => {
               {companyData.image || companyData.imageUrl ? (
                 <img
                   src={(() => {
-              if (!companyData) return assets.default_company_logo;
-              if (companyData.imageUrl) return companyData.imageUrl;
+              const backendUrl = import.meta.env.VITE_BACKEND_URL;
+              console.log('🏢 Dashboard - Backend URL:', backendUrl);
+              console.log('🏢 Dashboard - Company data:', companyData);
+              
+              if (!companyData) {
+                console.log('🏢 Dashboard - No company data, using default logo');
+                return assets.default_company_logo;
+              }
+              if (companyData.imageUrl) {
+                console.log('🏢 Dashboard - Using imageUrl:', companyData.imageUrl);
+                return companyData.imageUrl;
+              }
               if (companyData.image) {
                 if (companyData.image.startsWith('http')) {
+                  console.log('🏢 Dashboard - Using full URL:', companyData.image);
                   return companyData.image;
                 }
-                return `${import.meta.env.VITE_BACKEND_URL}/uploads/${companyData.image}`;
+                const constructedUrl = `${backendUrl}/uploads/${companyData.image}`;
+                console.log('🏢 Dashboard - Constructed URL:', constructedUrl);
+                return constructedUrl;
               }
+              console.log('🏢 Dashboard - No image, using default logo');
               return assets.default_company_logo;
             })()}
                   alt="Company Logo"
                   className="w-8 h-8 rounded-full object-cover border"
                   onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'block';
+                    if (e.target) {
+                      e.target.style.display = 'none';
+                    }
+                    if (e.target && e.target.nextSibling) {
+                      e.target.nextSibling.style.display = 'block';
+                    }
                   }}
                 />
               ) : null}
