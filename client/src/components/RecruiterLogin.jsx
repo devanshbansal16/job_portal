@@ -20,6 +20,10 @@ const RecruiterLogin = ({ onClose }) => {
   // ✅ handle forgot password
   const handleForgotPassword = async () => {
     try {
+      if (!backendUrl) {
+        alert("Backend URL is not configured. Please set VITE_BACKEND_URL in client/.env");
+        return;
+      }
       if (!forgotPasswordEmail) {
         alert("Please enter your company email");
         return;
@@ -46,6 +50,10 @@ const RecruiterLogin = ({ onClose }) => {
   // ✅ handle login
   const handleLogin = async () => {
     try {
+      if (!backendUrl) {
+        alert("Backend URL is not configured. Please set VITE_BACKEND_URL in client/.env");
+        return;
+      }
       if (!email || !password) {
         alert("Please fill all fields");
         return;
@@ -75,6 +83,10 @@ const RecruiterLogin = ({ onClose }) => {
   // ✅ handle signup
   const handleSignup = async () => {
     try {
+      if (!backendUrl) {
+        alert("Backend URL is not configured. Please set VITE_BACKEND_URL in client/.env");
+        return;
+      }
       if (!isTextDataSubmitted) {
               if (!name || !email || !password) {
         alert("Please fill all fields");

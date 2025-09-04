@@ -49,6 +49,7 @@ export const AppContextProvider = (props) => {
 
   const [isSearched, setIsSearched] = useState(false);
   const [jobs, setJobs] = useState([]);
+  const [isJobsLoading, setIsJobsLoading] = useState(true);
   const [showRecruiterLogin, setShowRecruiterLogin] = useState(false);
 
   const [companyToken, setCompanyToken] = useState(localStorage.getItem("recruiterToken"));
@@ -71,6 +72,7 @@ export const AppContextProvider = (props) => {
 
   // Function to fetch jobs data
   const fetchJobs = useCallback(async () => {
+    setIsJobsLoading(true);
     try {
       const { data } = await axios.get(backendUrl + "/api/jobs");
 
@@ -84,20 +86,19 @@ export const AppContextProvider = (props) => {
       
       // Handle different error types
       if (error.response?.status === 401) {
-        // Don't show error for 401 (unauthorized) - this is expected when not logged in
         return;
       } else if (error.response?.status === 500) {
-        // Server error - don't show toast, just log
         console.error("Server error fetching jobs:", error.response.data);
         return;
       } else if (error.code === 'ERR_NETWORK' || error.message.includes('Network Error')) {
-        // Network error - don't show toast, just log
         console.error("Network error fetching jobs:", error.message);
         return;
       }
       
       // Only show toast for unexpected client errors
       toast.error("Failed to fetch jobs. Please try again later.");
+    } finally {
+      setIsJobsLoading(false);
     }
   }, [backendUrl]);
 
@@ -417,6 +418,7 @@ export const AppContextProvider = (props) => {
           syncUser,
       clearUserData,
       isSignedIn: !!user,
+      isJobsLoading,
     };
 
   return (
