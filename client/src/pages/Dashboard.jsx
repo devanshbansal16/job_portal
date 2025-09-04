@@ -54,7 +54,7 @@ const Dashboard = () => {
                 Welcome, {companyData.name}
               </span>
               {/* Company Logo */}
-              {companyData.image || companyData.imageUrl ? (
+              {companyData.image ? (
                 <img
                   src={(() => {
               const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -66,7 +66,7 @@ const Dashboard = () => {
                 return assets.default_company_logo;
               }
               if (companyData.imageUrl) {
-                console.log('🏢 Dashboard - Using imageUrl:', companyData.imageUrl);
+                console.log('🏢 Dashboard - Using imageUrl:', `${backendUrl}/uploads/${companyData.image}`);
                 return companyData.imageUrl;
               }
               if (companyData.image) {
