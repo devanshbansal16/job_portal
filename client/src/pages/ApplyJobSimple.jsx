@@ -55,15 +55,23 @@ const ApplyJobSimple = () => {
   // Fetch job data
   const fetchJob = async () => {
     try {
+      console.log("🔍 Fetching job with ID:", id);
       const { data } = await axios.get(`${backendUrl}/api/jobs/${id}`);
       if (data.success) {
         setJobData(data.job);
+        console.log("✅ Job fetched successfully:", data.job.title);
       } else {
+        console.error("❌ Job fetch failed:", data.message);
         toast.error(data.message || "Failed to fetch job details");
         navigate("/");
       }
     } catch (error) {
-      toast.error("Failed to fetch job details");
+      console.error("❌ Job fetch error:", error.response?.status, error.message);
+      if (error.response?.status === 404) {
+        toast.error("Job not found");
+      } else {
+        toast.error("Failed to fetch job details");
+      }
       navigate("/");
     } finally {
       setIsLoading(false);
@@ -157,7 +165,20 @@ const ApplyJobSimple = () => {
   }, [id]);
 
   if (isLoading || !isLoaded) return <Loading />;
-  if (!jobData) return <div>Job not found</div>;
+  if (!jobData) return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold text-gray-900 mb-4">Job not found</h1>
+        <p className="text-gray-600 mb-8">The job you're looking for doesn't exist or has been removed.</p>
+        <button 
+          onClick={() => navigate("/")}
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+        >
+          Browse Jobs
+        </button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
