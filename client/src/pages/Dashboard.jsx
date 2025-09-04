@@ -56,7 +56,17 @@ const Dashboard = () => {
               {/* Company Logo */}
               {companyData.image || companyData.imageUrl ? (
                 <img
-                  src={companyData.imageUrl || `${import.meta.env.VITE_BACKEND_URL}/uploads/${companyData.image}`}
+                  src={(() => {
+              if (!companyData) return assets.default_company_logo;
+              if (companyData.imageUrl) return companyData.imageUrl;
+              if (companyData.image) {
+                if (companyData.image.startsWith('http')) {
+                  return companyData.image;
+                }
+                return `${import.meta.env.VITE_BACKEND_URL}/uploads/${companyData.image}`;
+              }
+              return assets.default_company_logo;
+            })()}
                   alt="Company Logo"
                   className="w-8 h-8 rounded-full object-cover border"
                   onError={(e) => {

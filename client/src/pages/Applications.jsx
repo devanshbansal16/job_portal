@@ -228,7 +228,17 @@ const Applications = () => {
                     >
                       <td className="px-6 py-4 flex items-center gap-3">
                         <img
-                          src={job.companyId?.imageUrl || `${import.meta.env.VITE_BACKEND_URL}/uploads/${job.companyId?.image || ''}`}
+                          src={(() => {
+                  if (!job.companyId) return assets.default_company_logo;
+                  if (job.companyId.imageUrl) return job.companyId.imageUrl;
+                  if (job.companyId.image) {
+                    if (job.companyId.image.startsWith('http')) {
+                      return job.companyId.image;
+                    }
+                    return `${import.meta.env.VITE_BACKEND_URL}/uploads/${job.companyId.image}`;
+                  }
+                  return assets.default_company_logo;
+                })()}
                           alt={job.companyId?.name || "Company"}
                           className="w-6 h-6 object-contain"
                           onError={(e) => { e.currentTarget.style.display = 'none'; }}

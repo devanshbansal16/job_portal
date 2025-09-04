@@ -20,7 +20,27 @@ const JobCard = ({ job }) => {
   };
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
-  const companyLogoSrc = `${backendUrl}/uploads/${job.companyId.image}`;
+  
+  // Construct company logo URL with fallback
+  const getCompanyLogoSrc = () => {
+    if (!backendUrl) {
+      console.error('❌ Backend URL not configured');
+      return assets.default_company_logo;
+    }
+    
+    if (!job.companyId?.image) {
+      return assets.default_company_logo;
+    }
+    
+    // Check if it's already a full URL (from cloudinary)
+    if (job.companyId.image.startsWith('http')) {
+      return job.companyId.image;
+    }
+    
+    return `${backendUrl}/uploads/${job.companyId.image}`;
+  };
+  
+  const companyLogoSrc = getCompanyLogoSrc();
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col gap-4">
@@ -30,8 +50,12 @@ const JobCard = ({ job }) => {
         <img
           src={companyLogoSrc}
           alt={`${job.companyId?.name || "Company"} logo`}
-          className="w-12 h-12 object-contain"
-          // onError={(e) => { e.currentTarget.src = assets.default_company_logo; }}
+          className="w-12 h-12 object-contain rounded-lg border border-gray-200"
+          onError={(e) => { 
+            console.log('❌ Image failed to load:', companyLogoSrc);
+            e.currentTarget.src = assets.default_company_logo; 
+          }}
+          onLoad={() => console.log('✅ Image loaded successfully:', companyLogoSrc)}
         />
       </div>
 

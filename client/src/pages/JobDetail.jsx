@@ -138,7 +138,17 @@ const JobDetail = () => {
           {/* Left */}
           <div className="flex items-start gap-6">
             <img
-              src={(jobData.companyId && (jobData.companyId.imageUrl || (jobData.companyId.image ? `${import.meta.env.VITE_BACKEND_URL}/uploads/${jobData.companyId.image}` : ''))) || assets.default_company_logo}
+              src={(() => {
+                if (!jobData.companyId) return assets.default_company_logo;
+                if (jobData.companyId.imageUrl) return jobData.companyId.imageUrl;
+                if (jobData.companyId.image) {
+                  if (jobData.companyId.image.startsWith('http')) {
+                    return jobData.companyId.image;
+                  }
+                  return `${import.meta.env.VITE_BACKEND_URL}/uploads/${jobData.companyId.image}`;
+                }
+                return assets.default_company_logo;
+              })()}
               alt="Company Logo"
               className="w-24 h-24 object-contain rounded-lg bg-white border"
               onError={(e) => { e.currentTarget.style.display = 'none'; }}
