@@ -13,6 +13,7 @@ const RecruiterLogin = ({ onClose }) => {
   const [isTextDataSubmitted, setIsTextDataSubmitted] = useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
   const [isForgotPasswordSent, setIsForgotPasswordSent] = useState(false);
+  const [accessMsg, setAccessMsg] = useState("");
 
   const navigate = useNavigate();
   const { backendUrl, setShowRecruiterLogin, setCompanyToken } = useContext(AppContext);
@@ -75,7 +76,12 @@ const RecruiterLogin = ({ onClose }) => {
         message: error.message
       });
       
+      const status = error.response?.status;
       const errorMessage = error.response?.data?.message || error.message || "Unknown error occurred";
+      if (status === 403) {
+        setAccessMsg(errorMessage || "This is only accessible for Recruiter.");
+        return;
+      }
       alert("Login failed: " + errorMessage);
     }
   };
@@ -120,7 +126,12 @@ const RecruiterLogin = ({ onClose }) => {
         message: error.message
       });
       
+      const status = error.response?.status;
       const errorMessage = error.response?.data?.message || error.message || "Unknown error occurred";
+      if (status === 403) {
+        setAccessMsg(errorMessage || "This is only accessible for Recruiter.");
+        return;
+      }
       alert("Signup failed: " + errorMessage);
     }
   };
@@ -154,6 +165,7 @@ const RecruiterLogin = ({ onClose }) => {
             setIsTextDataSubmitted(false);
             setForgotPasswordEmail("");
             setIsForgotPasswordSent(false);
+            setAccessMsg("");
             setState("Login");
             onClose();
           }}
@@ -301,6 +313,11 @@ const RecruiterLogin = ({ onClose }) => {
               >
                 {buttonText}
               </button>
+              {accessMsg && (
+                <p className="mt-2 text-center text-sm text-red-600">
+                  {accessMsg || "This is only accessible for Recruiter."}
+                </p>
+              )}
             </>
           )}
         </form>
@@ -318,6 +335,7 @@ const RecruiterLogin = ({ onClose }) => {
                   setEmail("");
                   setPassword("");
                   setLogo(null);
+                  setAccessMsg("");
                 }}
                 className="text-blue-600 font-medium cursor-pointer hover:underline"
               >
@@ -334,6 +352,7 @@ const RecruiterLogin = ({ onClose }) => {
                   setEmail("");
                   setPassword("");
                   setLogo(null);
+                  setAccessMsg("");
                 }}
                 className="text-blue-600 font-medium cursor-pointer hover:underline"
               >

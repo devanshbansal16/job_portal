@@ -25,6 +25,23 @@ export const registerCompany = async (req, res) => {
       });
     }
 
+    // Optional allowlist: only allow specific company emails to register as recruiters
+    const allowlist = (process.env.ALLOWED_COMPANY_EMAILS || "")
+      .split(",")
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean);
+
+    if (allowlist.length > 0) {
+      const emailLower = (email || "").toLowerCase();
+      const isAllowed = allowlist.includes(emailLower);
+      if (!isAllowed) {
+        return res.status(403).json({
+          success: false,
+          message: "Recruiter registration is restricted. Contact the site owner to get access.",
+        });
+      }
+    }
+
     // Check if company already exists
     const existingCompany = await Company.findOne({ email });
 
@@ -103,6 +120,23 @@ export const loginCompany = async (req, res) => {
 
     if (!company) {
       return res.status(400).json({ success: false, message: "Invalid email or password" });
+    }
+
+    // Optional allowlist: only allow specific company emails to log in as recruiters
+    const allowlist = (process.env.ALLOWED_COMPANY_EMAILS || "")
+      .split(",")
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean);
+
+    if (allowlist.length > 0) {
+      const emailLower = (company.email || "").toLowerCase();
+      const isAllowed = allowlist.includes(emailLower);
+      if (!isAllowed) {
+        return res.status(403).json({
+          success: false,
+          message: "Your company is not authorized to access recruiter features.",
+        });
+      }
     }
 
     const isMatch = await bcrypt.compare(password, company.password);

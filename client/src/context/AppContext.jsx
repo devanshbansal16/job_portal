@@ -121,7 +121,7 @@ export const AppContextProvider = (props) => {
       }
     } catch (error) {
       console.error("Error fetching company data:", error);
-      if (error.response?.status === 401) {
+      if (error.response?.status === 401 || error.response?.status === 403) {
         // Token expired or invalid, clear it
         setCompanyToken(null);
         localStorage.removeItem("recruiterToken");
