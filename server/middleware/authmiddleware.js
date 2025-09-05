@@ -28,22 +28,35 @@ export const protectCompany = async (req, res, next) => {
       });
     }
 
-    // Optional allowlist: only allow specific company emails to access recruiter endpoints
-    // Configure ALLOWED_COMPANY_EMAILS as a comma-separated list in server/.env
+    // Owner-first policy: prefer OWNER_COMPANY_EMAIL, else ALLOWED_COMPANY_EMAILS.
+    // If neither is configured, deny by default for safety.
+    const ownerEmail = (process.env.OWNER_COMPANY_EMAIL || "").trim().toLowerCase();
     const allowlist = (process.env.ALLOWED_COMPANY_EMAILS || "")
       .split(",")
       .map((e) => e.trim().toLowerCase())
       .filter(Boolean);
 
-    if (allowlist.length > 0) {
-      const emailLower = (company.email || "").toLowerCase();
-      const isAllowed = allowlist.includes(emailLower);
-      if (!isAllowed) {
+    const emailLower = (company.email || "").toLowerCase();
+
+    if (ownerEmail) {
+      if (emailLower !== ownerEmail) {
         return res.status(403).json({
           success: false,
           message: "Your company is not authorized to perform this action.",
         });
       }
+    } else if (allowlist.length > 0) {
+      if (!allowlist.includes(emailLower)) {
+        return res.status(403).json({
+          success: false,
+          message: "Your company is not authorized to perform this action.",
+        });
+      }
+    } else {
+      return res.status(403).json({
+        success: false,
+        message: "Recruiter access is disabled. Configure OWNER_COMPANY_EMAIL.",
+      });
     }
 
     req.company = company;

@@ -25,21 +25,33 @@ export const registerCompany = async (req, res) => {
       });
     }
 
-    // Optional allowlist: only allow specific company emails to register as recruiters
+    // Owner-first policy: Only allow OWNER_COMPANY_EMAIL to register.
+    const ownerEmail = (process.env.OWNER_COMPANY_EMAIL || "").trim().toLowerCase();
     const allowlist = (process.env.ALLOWED_COMPANY_EMAILS || "")
       .split(",")
       .map((e) => e.trim().toLowerCase())
       .filter(Boolean);
 
-    if (allowlist.length > 0) {
-      const emailLower = (email || "").toLowerCase();
-      const isAllowed = allowlist.includes(emailLower);
-      if (!isAllowed) {
+    const emailLower = (email || "").toLowerCase();
+    if (ownerEmail) {
+      if (emailLower !== ownerEmail) {
         return res.status(403).json({
           success: false,
-          message: "Recruiter registration is restricted. Contact the site owner to get access.",
+          message: "Recruiter registration is restricted to the owner.",
         });
       }
+    } else if (allowlist.length > 0) {
+      if (!allowlist.includes(emailLower)) {
+        return res.status(403).json({
+          success: false,
+          message: "Recruiter registration is restricted.",
+        });
+      }
+    } else {
+      return res.status(403).json({
+        success: false,
+        message: "Recruiter registration is disabled. Configure OWNER_COMPANY_EMAIL.",
+      });
     }
 
     // Check if company already exists
@@ -122,21 +134,33 @@ export const loginCompany = async (req, res) => {
       return res.status(400).json({ success: false, message: "Invalid email or password" });
     }
 
-    // Optional allowlist: only allow specific company emails to log in as recruiters
+    // Owner-first policy: Only allow OWNER_COMPANY_EMAIL (or allowlist) to login.
+    const ownerEmail = (process.env.OWNER_COMPANY_EMAIL || "").trim().toLowerCase();
     const allowlist = (process.env.ALLOWED_COMPANY_EMAILS || "")
       .split(",")
       .map((e) => e.trim().toLowerCase())
       .filter(Boolean);
 
-    if (allowlist.length > 0) {
-      const emailLower = (company.email || "").toLowerCase();
-      const isAllowed = allowlist.includes(emailLower);
-      if (!isAllowed) {
+    const emailLower = (company.email || "").toLowerCase();
+    if (ownerEmail) {
+      if (emailLower !== ownerEmail) {
         return res.status(403).json({
           success: false,
           message: "Your company is not authorized to access recruiter features.",
         });
       }
+    } else if (allowlist.length > 0) {
+      if (!allowlist.includes(emailLower)) {
+        return res.status(403).json({
+          success: false,
+          message: "Your company is not authorized to access recruiter features.",
+        });
+      }
+    } else {
+      return res.status(403).json({
+        success: false,
+        message: "Recruiter login is disabled. Configure OWNER_COMPANY_EMAIL.",
+      });
     }
 
     const isMatch = await bcrypt.compare(password, company.password);
