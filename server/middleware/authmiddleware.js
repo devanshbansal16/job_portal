@@ -30,8 +30,8 @@ export const protectCompany = async (req, res, next) => {
 
     // Owner-first policy: prefer OWNER_COMPANY_EMAIL, else ALLOWED_COMPANY_EMAILS.
     // If neither is configured, deny by default for safety.
-    const ownerEmail = (process.env.OWNER_COMPANY_EMAIL || "").trim().toLowerCase();
-    const allowlist = (process.env.ALLOWED_COMPANY_EMAILS || "")
+    const ownerEmail = (process.env.OWNER_COMPANY_EMAIL || process.env.OWNER_EMAIL || "").trim().toLowerCase();
+    const allowlist = (process.env.ALLOWED_COMPANY_EMAILS || process.env.ALLOWED_EMAILS || "")
       .split(",")
       .map((e) => e.trim().toLowerCase())
       .filter(Boolean);
@@ -55,7 +55,7 @@ export const protectCompany = async (req, res, next) => {
     } else {
       return res.status(403).json({
         success: false,
-        message: "Recruiter access is disabled. Configure OWNER_COMPANY_EMAIL.",
+        message: "Recruiter access is disabled. Configure OWNER_COMPANY_EMAIL or ALLOWED_COMPANY_EMAILS.",
       });
     }
 

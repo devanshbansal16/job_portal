@@ -26,8 +26,8 @@ export const registerCompany = async (req, res) => {
     }
 
     // Owner-first policy: Only allow OWNER_COMPANY_EMAIL to register.
-    const ownerEmail = (process.env.OWNER_COMPANY_EMAIL || "").trim().toLowerCase();
-    const allowlist = (process.env.ALLOWED_COMPANY_EMAILS || "")
+    const ownerEmail = (process.env.OWNER_COMPANY_EMAIL || process.env.OWNER_EMAIL || "").trim().toLowerCase();
+    const allowlist = (process.env.ALLOWED_COMPANY_EMAILS || process.env.ALLOWED_EMAILS || "")
       .split(",")
       .map((e) => e.trim().toLowerCase())
       .filter(Boolean);
@@ -135,8 +135,8 @@ export const loginCompany = async (req, res) => {
     }
 
     // Owner-first policy: Only allow OWNER_COMPANY_EMAIL (or allowlist) to login.
-    const ownerEmail = (process.env.OWNER_COMPANY_EMAIL || "").trim().toLowerCase();
-    const allowlist = (process.env.ALLOWED_COMPANY_EMAILS || "")
+    const ownerEmail = (process.env.OWNER_COMPANY_EMAIL || process.env.OWNER_EMAIL || "").trim().toLowerCase();
+    const allowlist = (process.env.ALLOWED_COMPANY_EMAILS || process.env.ALLOWED_EMAILS || "")
       .split(",")
       .map((e) => e.trim().toLowerCase())
       .filter(Boolean);
@@ -159,7 +159,7 @@ export const loginCompany = async (req, res) => {
     } else {
       return res.status(403).json({
         success: false,
-        message: "Recruiter login is disabled. Configure OWNER_COMPANY_EMAIL.",
+        message: "Recruiter login is disabled. Configure OWNER_COMPANY_EMAIL or ALLOWED_COMPANY_EMAILS.",
       });
     }
 
