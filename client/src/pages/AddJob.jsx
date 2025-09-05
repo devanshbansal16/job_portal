@@ -17,7 +17,7 @@ const AddJob = () => {
   const editorRef = useRef(null);
   const quillRef = useRef(null);
 
-  const { backendUrl, companyToken } = useContext(AppContext);
+  const { backendUrl, companyToken, setCompanyToken } = useContext(AppContext);
 
   // Component mounted
   useEffect(() => {
@@ -97,6 +97,17 @@ const AddJob = () => {
       // Log detailed error for debugging
       if (error.response?.data) {
         console.error("Server error details:", error.response.data);
+      }
+
+      // If unauthorized/forbidden, clear recruiter token and redirect to home
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        try {
+          setCompanyToken(null);
+          localStorage.removeItem("recruiterToken");
+        } catch (_) {}
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 800);
       }
     }
   };

@@ -355,7 +355,7 @@ export const AppContextProvider = (props) => {
   // Initial load
   useEffect(() => {
     fetchJobs();
-    const storeCompanyToken = localStorage.getItem("companyToken");
+    const storeCompanyToken = localStorage.getItem("recruiterToken");
 
     if (storeCompanyToken) {
       setCompanyToken(storeCompanyToken);
