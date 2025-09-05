@@ -20,9 +20,23 @@ import Company from '../models/Company.js';
 
 const router = express.Router();
 
-// Test endpoint to verify route is working
+// Test endpoint to verify route and allowlist status
 router.get('/test', (req, res) => {
-  res.json({ success: true, message: 'Company routes are working!' });
+  const allowlist = (process.env.ALLOWED_COMPANY_EMAILS || "")
+    .split(",")
+    .map((e) => e.trim())
+    .filter(Boolean);
+  res.json({
+    success: true,
+    message: 'Company routes are working!',
+    allowlistEnabled: allowlist.length > 0,
+    allowlistCount: allowlist.length,
+  });
+});
+
+// WhoAmI for recruiter tokens (debug)
+router.get('/whoami', protectCompany, (req, res) => {
+  res.json({ success: true, company: { id: req.company._id, email: req.company.email, name: req.company.name } });
 });
 
 // Debug endpoint to see all companies (remove this in production)
